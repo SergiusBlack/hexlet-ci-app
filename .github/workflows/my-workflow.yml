@@ -1,5 +1,5 @@
 # file: .github/workflows/show-directory.yml
-name: show-directory
+name: my-workflow
 # on – определяет события, которые запускают воркфлоу
 on: push
 jobs:
@@ -12,8 +12,15 @@ jobs:
       # экшен — выполняет какую-то задачу
       # checkout — клонирует репозиторий
       - uses: actions/checkout@v4
+      # Устанавливаем Node.js
+      - uses: actions/setup-node@v4
       # run – произвольная bash-команда
       # ls -la выведет содержимое текущего репозитория
+      # Ставим зависимости
       - run: make setup
-      - run: make test
+      # Запускаем линтер
       - run: make lint
+      # Запускаем тесты
+      - run: make test
+
+      

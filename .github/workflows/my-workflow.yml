@@ -1,30 +1,29 @@
 # file: .github/workflows/show-directory.yml
 name: my-workflow
 # on – определяет события, которые запускают воркфлоу
-on: push
-jobs:
-  # build – произвольно выбранное имя задания
-  # их может быть больше одного
-  build:
-    # операционная система для работы воркфлоу
-    runs-on: ubuntu-latest
-    env:  # 👉 Добавляем переменные окружения
-      JWT_SECRET: secret
-      ADMIN_JWT_SECRET: 4f953ba1dbf509a1479909a087f7507a
-      API_TOKEN_SALT: 8f913ba1dbf509a1479909a083f7504a
-    steps: # список шагов, которые надо выполнить
-      # экшен — выполняет какую-то задачу
-      # checkout — клонирует репозиторий
-      - uses: actions/checkout@v3
-      # Устанавливаем Node.js
-      - uses: actions/setup-node@v3
-      # run – произвольная bash-команда
-      # ls -la выведет содержимое текущего репозитория
-      # Ставим зависимости
-      - run: make setup
-      # Запускаем линтер
-      - run: make lint
-      # Запускаем тесты
-      - run: make test
+on:
+  - push
 
-      
+env:
+  CI: true
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: make install
+      - run: make lint
+      - run: make test
+      - uses: hexlet-components/hello-from-hexlet-action@release
